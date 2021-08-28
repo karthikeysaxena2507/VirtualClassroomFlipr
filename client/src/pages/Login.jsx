@@ -17,8 +17,8 @@ const Login = () => {
     useEffect(() => {
         const check = async() => {
             try {
-                // const user = await userApi.checkUser();
-                // (user !== "INVALID") && (window.location = `/home`);
+                const user = await userApi.checkUser();
+                (user !== "INVALID") && (window.location = `/home`);
                 setLoading(false);
             }
             catch(err) {
@@ -34,9 +34,13 @@ const Login = () => {
             try {
                 if(role === "Student" || role === "Teacher") {
                     const user = await userApi.loginUser(email, password, role);
-                    console.log(user);
-                    setMessage(" ");
-                    window.location = "/home";
+                    if(user === undefined) {
+                        setMessage("User Not Found");
+                    } 
+                    else {
+                        setMessage(" ");
+                        window.location = "/home";
+                    }
                 }
                 else {
                     setMessage("Please select designation: Student / Teacher");
@@ -55,8 +59,12 @@ const Login = () => {
             try {
                 if(role === "Student" || role === "Teacher") {
                     const user = await userApi.LoginWithGoogle(response.tokenId, role);
-                    console.log(user);
-                    window.location = "/home";
+                    if(user === undefined) {
+                        setMessage("User Not Found");
+                    }
+                    else {
+                        window.location = "/home";
+                    }
                 }
                 else {
                     setMessage("Please select designation: Student / Teacher");
@@ -79,7 +87,6 @@ const Login = () => {
     }
 
     const changeRole = (e) => {
-        console.log(e.target.value);
         setRole(e.target.value);
     }
 

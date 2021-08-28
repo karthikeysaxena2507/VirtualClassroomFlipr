@@ -2,7 +2,6 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-// const backendUrl = "###" + "/subjects";
 const backendUrl = "/subjects";
 
 /**

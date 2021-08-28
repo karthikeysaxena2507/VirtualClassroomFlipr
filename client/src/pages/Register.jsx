@@ -18,10 +18,9 @@ const Register = () => {
     useEffect(() => {
         const check = async() => {
             try {
-                // const user = await userApi.checkUser();
-                // console.log(user);
+                const user = await userApi.checkUser();
+                (user !== "INVALID") && (window.location = `/home`);
                 setLoading(false);
-                // window.location = "/home";
             }
             catch(err) {
                 console.log(err);
@@ -37,13 +36,12 @@ const Register = () => {
                 if(role === "Student" || role === "Teacher") {
                     const response = await userApi.registerUser(
                         username, email, password, role);
-                    if(response === "Username Already Exists" 
+                    if(response === "Username already exists" 
                         || response === "Email already exists") {
                         setMessage(response);
                     }
                     else {
-                        console.log(response);
-                        // window.location = "/login";
+                        window.location = "/";
                         setMessage("");
                     }
                 }
@@ -63,8 +61,12 @@ const Register = () => {
             try {
                 if(role === "Student" || role === "Teacher") {
                     const user = await userApi.LoginWithGoogle(response.tokenId, role);
-                    console.log(user);
-                    window.location = "/home";
+                    if(user === undefined) {
+                        setMessage("User Not Found");
+                    }
+                    else {
+                        window.location = "/home";
+                    }
                 }
                 else {
                     setMessage("Please select designation: Student / Teacher");
@@ -87,7 +89,6 @@ const Register = () => {
     }
 
     const changeRole = (e) => {
-        console.log(e.target.value);
         setRole(e.target.value);
     }
 

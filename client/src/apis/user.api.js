@@ -2,7 +2,6 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-// const backendUrl = "###" + "/users";
 const backendUrl = "/users";
 
 /**
@@ -11,6 +10,10 @@ const backendUrl = "/users";
 var checkUser = async() => {
    const user = await axios.get(backendUrl + "/auth");
    return user.data;
+}
+
+const logoutUser = async() => {
+    await axios.post(backendUrl + "/logout");
 }
 
 /**
@@ -33,7 +36,6 @@ var checkUser = async() => {
  * @param {String} role
  */
 const registerUser = async(username, email, password, role) => {
-    console.log(username, email, role, password);
     const user = await axios.post(backendUrl + "/register", {username, email, password, role});
     return user.data;
 }
@@ -58,4 +60,4 @@ const joinSubject = async(data) => {
     return response.data;
 }
 
-export { checkUser, loginUser, registerUser, LoginWithGoogle, joinSubject };
+export { checkUser, loginUser, registerUser, LoginWithGoogle, joinSubject, logoutUser };

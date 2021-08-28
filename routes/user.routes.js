@@ -14,5 +14,7 @@ router.post("/login", userController.loginUser);
 // GOOGLE LOGIN
 router.post("/googlelogin", userController.loginWithGoogle);
 
+// LOGOUT THE USER
+router.post("/logout", userController.logout);
 
 module.exports = router;
