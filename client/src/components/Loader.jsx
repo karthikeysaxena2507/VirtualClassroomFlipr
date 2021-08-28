@@ -3,10 +3,7 @@ import { Spinner } from "react-bootstrap";
 
 const Loader = () => {
     return (<div className="text-center upper-margin"> 
-        <span> <Spinner animation="grow" variant="dark" className="mr-4"/> </span>
-        <span> <Spinner animation="grow" variant="dark" className="mr-4"/> </span>
-        <span> <Spinner animation="grow" variant="dark" className="mr-4"/> </span>
-        <span> </span>
+        <span className = "mt-5"> <Spinner animation = "border" variant = "success" size = "lg"/> </span>
     </div>)
 };
 
