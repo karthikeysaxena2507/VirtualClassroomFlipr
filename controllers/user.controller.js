@@ -1,13 +1,16 @@
 require("dotenv").config();
 const User = require("../models/user.model");
+const Subject = require("../models/subject.model");
 const brcypt = require("bcryptjs");
 const { OAuth2Client } = require("google-auth-library");
 const { v4: uuidv4 } = require("uuid");
 const redis = require("../utils/redis"); 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const dataHelper = require("../helper/data");
 
 const checkAuth = async(req, res, next) => {
-    try {
+    try 
+    {
         const user = req.user;
         if(user === null) 
         {
@@ -17,11 +20,14 @@ const checkAuth = async(req, res, next) => {
         }
         else 
         {
-            res.json({
-                id: user._id,
+            const subjects = await dataHelper.getSubjectsFromSubjectIds(user.subjects);
+            const data = {
                 username: user.username,
-                role: user.role
-            });
+                subjects,
+                role: user.role,
+            }
+            res.json(data);
+
         }
     }
     catch(error) 
@@ -31,7 +37,8 @@ const checkAuth = async(req, res, next) => {
 }
 
 const registerUser = async(req, res, next) => {
-    try {
+    try 
+    {
         const { username, email, password, role } = req.body;
         const existingUser = await User.findOne({email});
         if(existingUser) 
@@ -90,9 +97,9 @@ const registerUser = async(req, res, next) => {
 }
 
 const loginUser = async(req, res, next) => {
-    try {
+    try 
+    {
         const { email, password, role } = req.body;
-        console.log(email, password, role);
         const user = await User.findOne({email, role});
         if(user) 
         {
@@ -129,7 +136,8 @@ const loginUser = async(req, res, next) => {
 }
 
 const loginWithGoogle = async(req, res, next) => {
-    try {   
+    try 
+    {   
         var tokenId = req.body.token;
         var role = req.body.role;
         const response = await client.verifyIdToken({idToken: tokenId, audience: process.env.GOOGLE_CLIENT_ID});
@@ -196,7 +204,6 @@ const loginWithGoogle = async(req, res, next) => {
 const logout = async(req, res, next) => {
     try 
     {
-        const user = req.user;
         redis.deleteBySessionId(req.cookies.SESSIONID);
         res.clearCookie("SESSIONID");
         res.json("LOGGED OUT");
@@ -207,10 +214,49 @@ const logout = async(req, res, next) => {
     }
 }
 
+const joinSubject = async(req, res, next) => {
+    try 
+    {
+        if(req.user === null) {
+            res.status(401).json({Error: "You are not authenticated"});
+        }
+        else if(req.user.username !== req.body.username) {
+            res.status(401).json({Error: "You are not authenticated"});
+        }
+        else {
+            const data = req.body;
+            const user = await User.findOne({username: data.username});
+            const subject = await Subject.findOne({subjectCode: data.subjectCode});
+            if (subject === null) {
+                res.json("Invalid Code");
+            }
+            user.subjects.push(subject);
+            user.save()
+            .then(() => {
+                subject.students.push(user);
+                subject.save()
+                .then((response) => {
+                    res.json(response);
+                })
+                .catch((err) => {
+                    res.json(err);
+                });
+            })
+            .catch((err) => {
+                res.json(err);
+            });
+        }
+    }
+    catch(error) {
+        res.json(next(error));
+    }
+}
+
 module.exports = {  
     checkAuth, 
     registerUser, 
     loginUser, 
     loginWithGoogle,
-    logout
+    logout,
+    joinSubject
 }

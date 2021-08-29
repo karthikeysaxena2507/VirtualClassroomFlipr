@@ -1,5 +1,6 @@
 const redis = require("../utils/redis"); 
 const User = require("../models/user.model");
+
 module.exports = async(req, res, next) => {
     const sessionId = req.cookies.SESSIONID;
     if(sessionId === undefined)  req.user = null;

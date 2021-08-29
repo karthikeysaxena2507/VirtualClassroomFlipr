@@ -17,4 +17,8 @@ router.post("/googlelogin", userController.loginWithGoogle);
 // LOGOUT THE USER
 router.post("/logout", userController.logout);
 
+// JOIN A CLASSROOM
+router.post("/join", auth, userController.joinSubject);
+
+
 module.exports = router;

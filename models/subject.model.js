@@ -3,26 +3,6 @@ const Task = require("./task.model");
 const User = require("./user.model");
 const { Schema } = mongoose
 
-const commentSchema = new Schema(
-    {
-        author: {
-            type: String,
-            required: true
-        },
-        title: {
-            type: String,
-            required: true
-        },
-        content: {
-            type: String,
-            required: true
-        }
-    },
-    {
-        timestamps: true
-    }
-);
-
 const subjectSchema = new Schema(
     {
         teacherName: {
@@ -37,15 +17,14 @@ const subjectSchema = new Schema(
             type: String,
             required: true
         },
-        subjectLink: {
-            type: String,
-            required: true
-        },
         subjectCode: {
             type: String,
             required: true
         },
-        comments: [commentSchema],
+        subjectLink: {
+            type: String,
+            required: true
+        },
         students: [
             {
                 type: Schema.Types.ObjectId,

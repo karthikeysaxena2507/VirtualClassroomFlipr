@@ -5,7 +5,8 @@ axios.defaults.withCredentials = true;
 const backendUrl = "/tasks";
 
 /**
- * The function to add a new Task
+ * Function to add a new Task
+ * @param {Object} data
  * @returns added Task Data
  */
 const addTask = async(data) => {
@@ -14,25 +15,38 @@ const addTask = async(data) => {
 }
 
 /**
- * The function to delete a task by Id
+ * Function to get task details from taskId
  * @param {String} taskId 
+ * @returns Task details
  */
-const deleteTask = async(taskId) => {
-    await axios.delete(backendUrl + `/${taskId}`);
+const getTaskById = async(taskId, username) => {
+    const response = await axios.get(backendUrl + `/${taskId}/${username}`);
+    return response.data;
 }
 
 /**
- * The function to get all tasks of a subject
- * @param {String} subjectId 
- * @returns list of tasks of a subject
+ * Function to add submission to a task
+ * @param {Object} data 
+ * @returns updated Task
  */
-const getTasksBySubject = async(subjectId) => {
-    const response = await axios.get(backendUrl + `/${subjectId}`);
+const submitTask = async(data) => {
+    const response = await axios.post(backendUrl + `/submit`, data);
+    return response.data;
+}
+
+/**
+ * Function to update the marks of a student's submission of a task
+ * @param {Object} data 
+ * @returns updated Task
+ */
+const updateMarks = async(data) => {
+    const response = await axios.post(backendUrl + `/marks`, data);
     return response.data;
 }
 
 export {
     addTask,
-    deleteTask,
-    getTasksBySubject
+    getTaskById,
+    submitTask,
+    updateMarks
 }
