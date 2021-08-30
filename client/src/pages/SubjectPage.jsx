@@ -3,9 +3,9 @@ import Header from "../components/Header";
 import Loader from "../components/Loader";
 import Heading from "../components/Heading";
 import { useParams } from "react-router-dom";
-import Assignment from "../components/Assignment";
-import Test from "../components/Test";
+import Task from "../components/Task";
 const subjectApi = require("../apis/subject.api");
+const taskApi = require("../apis/task.api");
 
 const Subjects = () => {
 
@@ -17,6 +17,8 @@ const Subjects = () => {
     const [previousAssignments, setPreviousAssignments] = useState([]);
     const [upcomingTests, setUpcomingTests] = useState([]);
     const [previousTests, setPreviousTests] = useState([]);
+    const [completedAssignments, setCompletedAssignments] = useState([]);
+    const [pendingAssignments, setPendingAssignments] = useState([]);
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -25,20 +27,50 @@ const Subjects = () => {
             try {
                 const response = await subjectApi.getSubjectById(id);
                 (response === "INVALID") && (window.location = `/`);
-                console.log(response);
                 setRole(response.role);
                 setUsername(response.username);
-                setSubject(response.subject);
-                const assignments = response.subject.tasks;
-                const tests = response.subject.tasks;
-                tests.filter((task) => {
+                setSubject(response.subject);            
+                let assignments = response.tasks;
+                let tests = response.tasks;
+                tests = tests.filter((task) => {
                     return (task.type === "Test")
                 });
-                assignments.filter((task) => {
+                assignments = assignments.filter((task) => {
                     return (task.type === "Assignment")
                 });
-
+                const date = new Date();
+                const currentTime = Date.parse(date);
+                setCurrentAssignments(assignments.filter((task) => {
+                    return (task.deadline > currentTime)
+                }));
+                setPreviousAssignments(assignments.filter((task) => {
+                    return (task.deadline <= currentTime)
+                }));
+                setUpcomingTests(tests.filter((task) => {
+                    return (task.deadline > currentTime)
+                }));
+                setPreviousTests(tests.filter((task) => {
+                    return (task.deadline <= currentTime)
+                }));
                 setStudents(response.subject.students);
+                const data = await taskApi.getTasksByUsername(response.username);
+                if (data !== null && response.role === "Student") {
+                    let pendingTasks = data.pendingTasks;
+                    let completedTasks = data.completedTasks;
+                    console.log(pendingTasks);
+                    setUpcomingTests(pendingTasks.filter((task) => {
+                        return (task.type === "Test" && task.deadline > currentTime);
+                    }));
+                    setPendingAssignments(pendingTasks.filter((task) => {
+                        return (task.type === "Assignment" && task.deadline > currentTime);
+                    }));
+                    setPreviousTests(completedTasks.filter((task) => {
+                        return (task.type === "Test" && task.deadline <= currentTime);
+                    }));
+                    setCompletedAssignments(completedTasks.filter((task) => {
+                        return (task.type === "Assignment" && task.deadline <= currentTime);
+                    }));
+                }
                 setLoading(false);
             }
             catch(err) {
@@ -81,45 +113,98 @@ const Subjects = () => {
                 onClick = {add}> New Test
             </button>
         </div>
-        <div className = "row mt-3 task">
-            <div className = "col-md-6 mt-2 card">
-                Assignments
-                <div>
-                    {currentAssignments.map((assignment) => {
+        <div className = "row mt-3 mb-5">
+            <div className = "col-md-6 mt-5 card">
+                <h3> Assignments </h3>
+                <div className = "mt-4" style = {role === "Student" ? {display: "none"} : null}>
+                    <h4 className = "text-left"> Live Assignments </h4>
+                    {currentAssignments.map((task) => {
                         return (
-                            <Assignment 
+                            <Task 
+                                key = {task._id}
                                 username = {username}
-
+                                role = {role}
+                                title = {task.title}
+                                type = {task.type}
+                                taskId = {task._id}
                             />
                         )
                     })}
                 </div>
-                <div>
-                    {previousAssignments.map((assignment) => {
+                <div className = "mt-4" style = {role === "Student" ? {display: "none"} : null}>
+                    <h4 className = "text-left"> Previous Assignments </h4>
+                    {previousAssignments.map((task) => {
                         return (
-                            <Assignment 
+                            <Task 
+                                key = {task._id}
                                 username = {username}
+                                role = {role}
+                                title = {task.title}
+                                type = {task.type}
+                                taskId = {task._id}
+                            />
+                        )
+                    })}
+                </div>
+                <div className = "mt-4" style = {role === "Teacher" ? {display: "none"} : null}>
+                    <h4 className = "text-left"> Pending Assignments </h4>
+                    {pendingAssignments.map((task) => {
+                        return (
+                            <Task 
+                                key = {task._id}
+                                username = {username}
+                                role = {role}
+                                title = {task.title}
+                                type = {task.type}
+                                taskId = {task._id}
+                            />
+                        )
+                    })}
+                </div>
+                <div className = "mt-4" style = {role === "Teacher" ? {display: "none"} : null}>
+                    <h4 className = "text-left"> Completed Assignments </h4>
+                    {completedAssignments.map((task) => {
+                        return (
+                            <Task 
+                                key = {task._id}
+                                username = {username}
+                                role = {role}
+                                title = {task.title}
+                                type = {task.type}
+                                taskId = {task._id}
                             />
                         )
                     })}
                 </div>
             </div>
-            <div className = "col-md-6 mt-2 card ">
-                Tests
-                <div>
-                    {upcomingTests.map((test) => {
+            <div className = "col-md-6 mt-5 card">
+                <h3> Tests </h3>
+                <div className = "mt-4">
+                    <h4 className = "text-left"> Upcoming Tests </h4>
+                    {upcomingTests.map((task) => {
                         return (
-                            <Test 
+                            <Task 
+                                key = {task._id}
                                 username = {username}
+                                role = {role}
+                                title = {task.title}
+                                type = {task.type}
+                                taskId = {task._id}
                             />
                         );
                     })}
                 </div>
-                <div>
-                    {previousTests.map((test) => {
+                <div className = "mt-4">
+                    <h4 className = "text-left"> Previous Tests </h4>
+                    {previousTests.map((task) => {
                         return (
-                            <Test 
+                            <Task 
+                                key = {task._id}
                                 username = {username}
+                                role = {role}
+                                title = {task.title}
+                                type = {task.type}
+                                taskId = {task._id}
                             />
                         );
                     })}

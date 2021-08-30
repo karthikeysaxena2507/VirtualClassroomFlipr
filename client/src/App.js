@@ -7,8 +7,10 @@ import Subject from "./pages/SubjectPage";
 import CreateSubject from "./pages/CreateSubject";
 import CreateTask from "./pages/CreateTask";
 import PageNotFound from "./pages/PageNotFound";
-import Assignment from "./pages/AssignmentPage";
-import Test from "./pages/TestPage";
+import AssignmentStudent from "./pages/student/AssignmentPage";
+import AssignmentTeacher from "./pages/teacher/AssignmentPage"
+import TestTeacher from "./pages/teacher/TestPage";
+import TestStudent from "./pages/student/TestPage";
 import "./App.css";
 
 const App = () => {
@@ -21,9 +23,11 @@ const App = () => {
           <Route exact path = "/new" component = {CreateSubject} />
           <Route exact path = "/create/:type/:subjectId" component = {CreateTask} />
           <Route exact path = "/subject/:id" component = {Subject}/>
-          <Route exact path = "/assignment/:id" component = {Assignment} />
-          <Route exact path = "/test/:id" component = {Test} />
-          <Route path="*" component = {PageNotFound} />
+          <Route exact path = "/Assignment/Student/:id" component = {AssignmentStudent} />
+          <Route exact path = "/Test/Student/:id" component = {TestStudent} />
+          <Route exact path = "/Assignment/Teacher/:id" component = {AssignmentTeacher} />
+          <Route exact path = "/Test/Student/:id" component = {TestTeacher} />
+          <Route path = "*" component = {PageNotFound} />
       </Switch>
   </Router>
   );

@@ -22,8 +22,7 @@ const subjectSchema = new Schema(
             required: true
         },
         subjectLink: {
-            type: String,
-            required: true
+            type: String
         },
         students: [
             {

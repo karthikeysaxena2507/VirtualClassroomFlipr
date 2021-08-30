@@ -17,8 +17,7 @@ const submissionSchema = new Schema({
     },
     marksObtained: {
         type: Number,
-        required: true,
-        min: 0
+        required: true
     },
     taskId: {
         type: String,

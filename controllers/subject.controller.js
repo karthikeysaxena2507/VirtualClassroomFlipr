@@ -2,6 +2,7 @@ const Subject = require("../models/subject.model");
 const { v4: uuidv4 } = require("uuid");
 const User = require("../models/user.model");
 const redis = require("../utils/redis"); 
+const helper = require("../helper/data");
 
 const addSubject = async(req, res, next) => {
     try 
@@ -24,9 +25,8 @@ const addSubject = async(req, res, next) => {
                 teacherName: data.username,
                 subjectName: data.subjectName,
                 subjectCode,
-                subjectName: "",
+                subjectLink: "",
                 schedule: data.schedule,
-                comments: [],
                 students: [],
                 tasks: []
             });
@@ -136,8 +136,10 @@ const getSubjectById = async(req, res, next) => {
         else 
         {
             let subject = await Subject.findOne({_id: req.params.subjectId});
+            const tasks = await helper.getTasksFromTaskIds(subject.tasks);
             res.json({
                 subject,
+                tasks,
                 username: user.username,
                 role: user.role
             });

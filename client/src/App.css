@@ -65,6 +65,20 @@ body {
 }
 
 .card {
-  background-color: rgb(121, 212, 156) !important;
-  border: none;
+  background-color: aquamarine !important;
+  padding: 20px 20px;
+  border-top: 2x solid darkgreen !important;
+}
+
+.task {
+  border: 1px solid darkgreen;
+  border-radius: 1px;
+  font-size: large;
+  padding: 5px 5px;
+  background-color: rgb(173, 247, 173);
+}
+
+.move-right {
+  float: right;
+  padding-right: 5px;
 }

@@ -18,7 +18,6 @@ const CreateSubject = () => {
             try {
                 const data = await userApi.checkUser();
                 (data === "INVALID") && (window.location = `/`);
-                (data.role === "INVALID") && (window.location = `/home`);
                 setLoading(false);
                 setUsername(data.username);            
             }
@@ -37,7 +36,6 @@ const CreateSubject = () => {
                 schedule
             };
             const response = await subjectApi.createSubject(data);
-            console.log(response);
             window.location = `/subject/${response._id}`;
         }
         catch(error) {

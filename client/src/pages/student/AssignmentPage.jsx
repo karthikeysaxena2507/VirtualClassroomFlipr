@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
-import Loader from "../components/Loader";
-import Heading from "../components/Heading";
-const userApi = require("../apis/user.api.js");
+import Header from "../../components/Header";
+import Loader from "../../components/Loader";
+import Heading from "../../components/Heading";
+const userApi = require("../../apis/user.api.js");
 
 const AssignmentPage = () => {
 
@@ -33,7 +33,7 @@ const AssignmentPage = () => {
         <Header />
         <Heading heading = "Subject" />
         <div className = "mt-3">
-
+            Assignment Page
         </div>
     </div>
 }

@@ -24,6 +24,11 @@ const getTaskById = async(taskId, username) => {
     return response.data;
 }
 
+const getTasksByUsername = async(username) => {
+    const response = await axios.get(backendUrl + `/${username}`);
+    return response.data;
+}
+
 /**
  * Function to add submission to a task
  * @param {Object} data 
@@ -48,5 +53,6 @@ export {
     addTask,
     getTaskById,
     submitTask,
-    updateMarks
+    updateMarks,
+    getTasksByUsername
 }

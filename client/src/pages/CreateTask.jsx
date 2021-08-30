@@ -43,6 +43,7 @@ const CreateTask = () => {
                 username,
                 title,
                 description,
+                totalMarks,
                 subjectId,
                 type,
                 date,
@@ -102,8 +103,6 @@ const CreateTask = () => {
                 className = "pt-1 pb-1 pl-2 pr-2" 
                 style = {{width: "100%"}}
                 onChange = {(e) => setTotalMarks(e.target.value)}
-                placeholder = {"Total Marks of " + type} 
-                autoComplete = "off" 
                 required 
             />
         </div>

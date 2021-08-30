@@ -14,4 +14,7 @@ router.post("/marks", auth, taskController.updateMarks);
 // SUBMIT A TASK 
 router.post("/submit", auth, taskController.submitTask);
 
+// GET TASKS OF A USER
+router.get("/:username", auth, taskController.getTasksByUser);
+
 module.exports = router;

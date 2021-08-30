@@ -1,5 +1,6 @@
 const Subject = require("../models/subject.model");
 const Task = require("../models/task.model");
+const User = require("../models/user.model");
 const dateHelper = require("../utils/date");
 const helper = require("../helper/data");
 
@@ -14,33 +15,33 @@ const addTask = async(req, res, next) => {
         }
         else {
             const data = req.body;
-            console.log(data.date + " " + data.time);
-            const dateString = data.date + " " + data.time;
-            const deadline = dateHelper.convertDateStringToMilliseconds(dateString);
-            // const task = new Task({
-            //     title: data.title,
-            //     description: data.description,
-            //     type: data.type,
-            //     subjectId: data.subjectId,
-            //     deadline,
-            //     creator: data.username,
-            //     totalMarks: data.totalMarks,
-            //     submissions: []
-            // });
-            // const subject = await Subject.findOne({_id: data.subjectId});
-            // subject.tasks.push(task);
-            // const user = await User.findOne({username: data.username});
-            // user.pendingTasks.push(task);
-            // await user.save()
-            // await subject.save()
-            // task.save()
-            // .then((task) => {
-            //     res.json(task);
-            // })
-            // .catch((error) => {
-            //     res.json(next(error));
-            // });
-            res.json("Added");
+            const deadline = dateHelper.convertDateToMilliseconds(data.date + " " + data.time);
+            const task = new Task({
+                title: data.title,
+                description: data.description,
+                type: data.type,
+                subjectId: data.subjectId,
+                deadline,
+                creator: data.username,
+                totalMarks: data.totalMarks,
+                submissions: []
+            });
+            const subject = await Subject.findOne({_id: data.subjectId});
+            subject.tasks.push(task);
+            const userIds = subject.students;
+            for (let id of userIds) {
+                const user = await User.findOne({_id: id});
+                user.pendingTasks.push(task);
+                await user.save();
+            }
+            await subject.save()
+            task.save()
+            .then((task) => {
+                res.json(task);
+            })
+            .catch((error) => {
+                res.json(next(error));
+            });
         }
     }
     catch(error) {
@@ -58,7 +59,7 @@ const getTaskById = async(req, res, next) => {
             res.status(401).json({Error: "You are not authenticated"});
         }
         else {
-            const task = await Task.findOne({_id: req.params.id});
+            const task = await Task.findOne({_id: req.params.taskId});
             res.json(task);
         }
     }
@@ -136,9 +137,34 @@ const updateMarks = async(req, res, next) => {
     }
 }
 
+const getTasksByUser = async(req, res, next) => {
+    try 
+    {
+        if(req.user === null) {
+            res.status(401).json({Error: "You are not authenticated"});
+        }
+        else if(req.user.username !== req.params.username) {
+            res.status(401).json({Error: "You are not authenticated"});
+        }
+        else {
+            const user = await User.findOne({username: req.params.username});
+            const pendingTasks = await helper.getTasksFromTaskIds(user.pendingTasks);
+            const completedTasks = await helper.getTasksFromTaskIds(user.completedTasks)
+            res.json({
+                pendingTasks,
+                completedTasks
+            });
+        }
+    }
+    catch(error) {
+        res.json(next(error));
+    }
+}
+
 module.exports = {
     addTask,
     getTaskById,
     updateMarks,
-    submitTask
+    submitTask,
+    getTasksByUser
 }
