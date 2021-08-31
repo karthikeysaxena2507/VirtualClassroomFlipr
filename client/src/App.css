@@ -82,3 +82,24 @@ body {
   float: right;
   padding-right: 5px;
 }
+
+.weekDays-selector input {
+  display: none!important;
+}
+
+.weekDays-selector input[type=checkbox] + label {
+  display: inline-block;
+  border-radius: 3px;
+  background: white;
+  height: 45px;
+  width: 35px;
+  margin-right: 3px;
+  line-height: 50px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.weekDays-selector input[type=checkbox]:checked + label {
+  background: green;
+  color: #ffffff;
+}

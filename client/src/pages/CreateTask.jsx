@@ -19,6 +19,7 @@ const CreateTask = () => {
     const [timeText, setTimeText] = useState("");
     const [time, setTime] = useState("");
     const [date, setDate] = useState("");
+    const [duration, setDuration] = useState(0);
 
     useEffect(() => {
         const check = async() => {
@@ -45,13 +46,14 @@ const CreateTask = () => {
                 description,
                 totalMarks,
                 subjectId,
+                duration,
                 type,
                 date,
                 time
             };
             const response = await taskApi.addTask(data);
             console.log(response);
-            window.location = `/${type}/${response._id}`;
+            window.location = `/subject/${subjectId}`;
         }
         catch(error) {
             console.log(error);
@@ -107,7 +109,7 @@ const CreateTask = () => {
             />
         </div>
         <div className = "mt-3 text-left">
-            <span> <b> {dateText} </b> </span>
+            <span> <b> {dateText}: </b> </span>
             <input 
                 type = "date" 
                 value = {date}
@@ -118,13 +120,24 @@ const CreateTask = () => {
             />
         </div>
         <div className = "mt-3 text-left">
-            <span> <b> {timeText} </b> </span>
+            <span> <b> {timeText}: </b> </span>
             <input 
                 type = "time" 
                 value = {time}
                 className = "pt-1 pb-1 pl-2 pr-2" 
                 style = {{width: "100%"}}
                 onChange = {(e) => setTime(e.target.value)}
+                required 
+            />
+        </div>
+        <div style = {type === "Assignment" ? {display: "none"} : null} className = "mt-3 text-left">
+            <span> <b> Duration (in minutes) </b> </span>
+            <input 
+                type = "number"  
+                value = {duration}
+                className = "pt-1 pb-1 pl-2 pr-2" 
+                style = {{width: "100%"}}
+                onChange = {(e) => setDuration(e.target.value)}
                 required 
             />
         </div>

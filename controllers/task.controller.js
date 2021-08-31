@@ -21,6 +21,7 @@ const addTask = async(req, res, next) => {
                 description: data.description,
                 type: data.type,
                 subjectId: data.subjectId,
+                duration: (data.duration * 60 * 1000),
                 deadline,
                 creator: data.username,
                 totalMarks: data.totalMarks,
@@ -31,10 +32,10 @@ const addTask = async(req, res, next) => {
             const userIds = subject.students;
             for (let id of userIds) {
                 const user = await User.findOne({_id: id});
-                user.pendingTasks.push(task);
+                user.tasks.push(task);
                 await user.save();
             }
-            await subject.save()
+            subject.save()
             task.save()
             .then((task) => {
                 res.json(task);
@@ -80,24 +81,30 @@ const submitTask = async(req, res, next) => {
         else {
             const data = req.body;
             const task = await Task.findOne({_id: data.taskId});
-            const submission = {
-                studentName: data.studentName,
-                submissionLink: data.submissionLink,
-                subjectName: data.subjectName,
-                taskId: data.taskId,
-                marksObtained: 0
+            console.log(task);
+            const userIndex = task.submissions.findIndex((sub) => 
+                JSON.stringify(sub.studentName) === JSON.stringify(data.username)
+            );
+            if (userIndex !== (-1)) {
+                task.submissions[userIndex].submissionLink = data.submissionLink;
             }
-            task.submissions.push(submission);
-            const taskIds = [];
-            taskIds.push(data.taskId);
-            await helper.refreshUser(req.body.username, taskIds);
+            else {
+                const submission = {
+                    studentName: data.username,
+                    submissionLink: data.submissionLink,
+                    subjectId: data.subjectId,
+                    taskId: data.taskId,
+                    marksObtained: 0
+                }
+                task.submissions.push(submission);
+            }
             task.save()
             .then((task) => {
                 res.json(task);
             })
             .catch((err) => {
                 res.json(next(err));
-            })
+            });
         }
     }
     catch(error) {
@@ -148,12 +155,38 @@ const getTasksByUser = async(req, res, next) => {
         }
         else {
             const user = await User.findOne({username: req.params.username});
-            const pendingTasks = await helper.getTasksFromTaskIds(user.pendingTasks);
-            const completedTasks = await helper.getTasksFromTaskIds(user.completedTasks)
-            res.json({
-                pendingTasks,
-                completedTasks
+            let tasks = await helper.getTasksFromTaskIds(user.tasks);
+            console.log(tasks);
+            const userTasks = tasks.filter((task) => {
+                return (JSON.stringify(task.subjectId) === JSON.stringify(req.params.subjectId))
             });
+            console.log(userTasks);
+            res.json({tasks: userTasks});
+        }
+    }
+    catch(error) {
+        res.json(next(error));
+    }
+}
+
+const getSubmission = async(req, res, next) => {
+    try 
+    {
+        if(req.user === null) {
+            res.status(401).json({Error: "You are not authenticated"});
+        }
+        else if(req.user.username !== req.params.username) {
+            res.status(401).json({Error: "You are not authenticated"});
+        }
+        else {
+            const task = await Task.findOne({_id: req.params.taskId});
+            const userIndex = task.submissions.findIndex((sub) => 
+                JSON.stringify(sub.studentName) === JSON.stringify(req.params.username)
+            );
+            if (userIndex === (-1)) {
+                res.json("Not Submitted");
+            }
+            res.json(task.submissions[userIndex]);
         }
     }
     catch(error) {
@@ -166,5 +199,6 @@ module.exports = {
     getTaskById,
     updateMarks,
     submitTask,
-    getTasksByUser
+    getTasksByUser,
+    getSubmission
 }

@@ -17,6 +17,7 @@ const AssignmentPage = () => {
     const [submissions, setSubmissions] = useState([]);
     const [date, setDate] = useState("");
     const [loading, setLoading] = useState(true);
+    const [status, setStatus] = useState("Previous");
 
     useEffect(() => {
         const check = async() => {
@@ -27,15 +28,17 @@ const AssignmentPage = () => {
                 setUsername(user.username);            
                 setRole(user.role);
                 const response = await taskApi.getTaskById(id, user.username);
-                setTask(response);
-                var d = new Date(response.deadline);
-                console.log(d);
-                // setDate(d.)
                 console.log(response);
+                setTask(response);
+                var date = new Date(response.deadline);
+                const currentTime = Date.parse(new Date());
+                const deadline = response.deadline;
+                ((currentTime < deadline) && setStatus("Pending"));
+                setDate(date.toLocaleString('en-US', { timeZone: 'GMT'}));
                 setSubmissions(response.submissions);
             }
             catch(err) {
-                // userApi.logoutUser();
+                userApi.logoutUser();
                 console.log(err);
             }
         }
@@ -43,7 +46,7 @@ const AssignmentPage = () => {
     },[id]);
 
     return (loading) ? <Loader /> :
-    <div className = "text-center upper-margin">
+    <div className = "text-center upper-margin container">
         <Header />
         <Heading heading = "Assignment" />
         <div className = "subject mt-4 text-left pl-3 pr-3 pt-3 pb-3">
@@ -54,11 +57,26 @@ const AssignmentPage = () => {
         </div>
         <div className = "mt-4">
             <h3> Submissions </h3>
+            <p className = "mt-2"> Note: Only submissions of Previous assignments can be viewed and graded </p>
+            <h4 
+                className = "mt-2"
+                style = {submissions.length > 0 ? {display: "none"} : null}
+            > 
+                No Submissions
+            </h4>
             {submissions.map((submission) => {
                 return (
                     <Submission
+                        key = {username}
                         username = {username}
                         role = {role}
+                        type = {type}
+                        studentName = {submission.studentName}
+                        submissionLink = {submission.submissionLink}    
+                        marksObtained = {submission.marksObtained}
+                        totalMarks = {task.totalMarks}
+                        taskId = {task._id}
+                        status = {status}
                     />);
             })}
         </div>

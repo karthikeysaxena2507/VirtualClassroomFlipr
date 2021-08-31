@@ -43,7 +43,8 @@ const Home = () => {
                         key = {subject._id}
                         id = {subject._id}
                         subjectName = {subject.subjectName}
-                        schedule = {subject.schedule}
+                        time = {subject.time}
+                        days = {subject.days.toString()}
                         username = {username}
                         teacherName = {subject.teacherName}
                         text = {(role === "Teacher") ? "Delete" : "Leave"}

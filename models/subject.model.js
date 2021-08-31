@@ -13,7 +13,8 @@ const subjectSchema = new Schema(
             type: String,
             required: true
         },
-        schedule: {
+        days: [String],
+        time: {
             type: String,
             required: true
         },

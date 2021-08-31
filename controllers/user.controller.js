@@ -231,6 +231,9 @@ const joinSubject = async(req, res, next) => {
                 res.json("Invalid Code");
             }
             user.subjects.push(subject);
+            for (let task of subject.tasks) {
+                user.tasks.push(task);
+            }
             user.save()
             .then(() => {
                 subject.students.push(user);

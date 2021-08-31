@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require("uuid");
 const User = require("../models/user.model");
 const redis = require("../utils/redis"); 
 const helper = require("../helper/data");
+const Task = require("../models/task.model");
 
 const addSubject = async(req, res, next) => {
     try 
@@ -25,8 +26,9 @@ const addSubject = async(req, res, next) => {
                 teacherName: data.username,
                 subjectName: data.subjectName,
                 subjectCode,
-                subjectLink: "",
-                schedule: data.schedule,
+                subjectLink: data.classLink,
+                time: data.time,
+                days: data.days,
                 students: [],
                 tasks: []
             });
@@ -71,6 +73,9 @@ const deleteSubject = async(req, res, next) => {
                     user.subjects.splice(subjectIndex, 1);
                 }
                 user.save();
+            }
+            for (let taskId of subject.tasks) {
+                await Task.deleteOne({_id: taskId});
             }
             await Subject.deleteOne({_id: req.params.id});
             res.json("DELETED");

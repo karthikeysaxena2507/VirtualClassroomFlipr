@@ -11,7 +11,7 @@ const submissionSchema = new Schema({
         type: String,
         required: true
     },
-    subjectName: {
+    subjectId: {
         type: String,
         required: true
     },
@@ -51,6 +51,9 @@ const taskSchema = new Schema(
         deadline: {
             type: Number,
             required: true
+        },
+        duration: {
+            type: Number
         },
         totalMarks: {
             type: Number,

@@ -33,7 +33,7 @@ const Subject = (props) => {
         </div>
         <div className = "bottom">
             <div className = "mt-1">
-                Schedule: <i> {props.schedule} </i>
+                Schedule: <i> {props.days + " at " + props.time + " hrs "} </i>
             </div>
             <div className = "mt-1">
                 Class Code: <b>{props.subjectCode}</b>

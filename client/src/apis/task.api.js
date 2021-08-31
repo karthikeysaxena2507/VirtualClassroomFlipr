@@ -20,12 +20,22 @@ const addTask = async(data) => {
  * @returns Task details
  */
 const getTaskById = async(taskId, username) => {
-    const response = await axios.get(backendUrl + `/${taskId}/${username}`);
+    const response = await axios.get(backendUrl + "/task/" + taskId + "/" + username);
     return response.data;
 }
 
-const getTasksByUsername = async(username) => {
-    const response = await axios.get(backendUrl + `/${username}`);
+/**
+ * Function to get Tasks of a user
+ * @param {String} username 
+ * @returns list of tasks of a user
+ */
+const getTasksByUsername = async(username, subjectId) => {
+    const response = await axios.get(backendUrl + `/${username}/${subjectId}`);
+    return response.data;
+}
+
+const getSubmission = async(taskId, username) => {
+    const response = await axios.get(backendUrl + `/submission/${taskId}/${username}`);
     return response.data;
 }
 
@@ -54,5 +64,6 @@ export {
     getTaskById,
     submitTask,
     updateMarks,
-    getTasksByUsername
+    getTasksByUsername,
+    getSubmission
 }

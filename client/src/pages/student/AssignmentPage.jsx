@@ -2,23 +2,46 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Loader from "../../components/Loader";
 import Heading from "../../components/Heading";
+import { useParams } from "react-router-dom";
 const userApi = require("../../apis/user.api.js");
+const taskApi = require("../../apis/task.api");
 
 const AssignmentPage = () => {
 
+    const { id } = useParams();
     const [username, setUsername] = useState("");
-    const [role, setRole] = useState("");
+    const [task, setTask] = useState({});
+    const [submissionLink, setSubmissionLink] = useState("");
+    const [date, setDate] = useState("");
+    const [marksObtained, setMarksObtained] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [link, setLink] = useState("");
+    const [status, setStatus] = useState("Previous");
 
     useEffect(() => {
         const check = async() => {
             try {
                 const user = await userApi.checkUser();
                 (user === "INVALID") && (window.location = `/`);
-                console.log(user);
                 setLoading(false);
                 setUsername(user.username);            
-                setRole(user.role);
+                const response = await taskApi.getTaskById(id, user.username);
+                setTask(response);
+                const data = await taskApi.getSubmission(id, user.username);
+                const date = new Date();
+                const currentTime = Date.parse(date);
+                const deadline = response.deadline;
+                ((currentTime < deadline) && setStatus("Pending")); 
+                var d = new Date(deadline);
+                if (data === "Not Submitted") {
+                    setSubmissionLink(data);
+                }
+                else {
+                    setSubmissionLink(data.submissionLink);
+                    setMarksObtained(data.marksObtained);
+                    setLink(data.submissionLink);
+                }
+                setDate(d.toLocaleString('en-US', { timeZone: 'GMT'}));
             }
             catch(err) {
                 userApi.logoutUser();
@@ -26,15 +49,55 @@ const AssignmentPage = () => {
             }
         }
         check();
-    },[]);
+    },[id]);
+
+    const submit = async() => {
+        try {
+            const data = {
+                username,
+                submissionLink: link,
+                subjectId: task.subjectId,
+                taskId: id
+            };
+            const response = await taskApi.submitTask(data);
+            console.log(response);
+            window.location = `/subject/${task.subjectId}`;
+        }
+        catch(err) {
+            console.log(err);
+        }
+    }
 
     return (loading) ? <Loader /> :
-    <div className = "text-center upper-margin">
+    <div className = "text-center upper-margin container">
         <Header />
-        <Heading heading = "Subject" />
-        <div className = "mt-3">
-            Assignment Page
+        <Heading heading = "Assignment" />
+        <div className = "subject mt-4 text-left pl-3 pr-3 pt-3 pb-3">
+            <h3> {task.title} </h3> 
+            <li> Description: {task.description} </li>
+            <li> Total Marks: {task.totalMarks} </li>
+            <li> Deadline: {date} </li>
+            <li> Marks obtained: {marksObtained} / {task.totalMarks} </li> 
+            <li> My Submission: {submissionLink} </li>
+            <li style = {(status === "Previous") ? {display: "none"}: null}>
+                Add Submission Link:
+                <input 
+                    type = "text" 
+                    value = {link}
+                    className = "mt-1 ml-2" 
+                    onChange = {(e) => setLink(e.target.value)}
+                    placeholder = "Enter Submission Link" 
+                />
+                
+            </li>
+            <div className = "text-center">
+            <button 
+                className = "btn expand" 
+                onClick = {submit}> Submit
+            </button>
+            </div>
         </div>
+
     </div>
 }
 

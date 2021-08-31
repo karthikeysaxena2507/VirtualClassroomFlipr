@@ -27,19 +27,12 @@ const userSchema = new Schema(
                 ref: Subject
             }
         ],
-        completedTasks: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: Subject
-            }
-        ],
-        pendingTasks: [
+        tasks: [
             {
                 type: Schema.Types.ObjectId,
                 ref: Subject
             }
         ]
-
     },
     {
         timestamps: true

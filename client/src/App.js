@@ -26,7 +26,7 @@ const App = () => {
           <Route exact path = "/Assignment/Student/:id" component = {AssignmentStudent} />
           <Route exact path = "/Test/Student/:id" component = {TestStudent} />
           <Route exact path = "/Assignment/Teacher/:id" component = {AssignmentTeacher} />
-          <Route exact path = "/Test/Student/:id" component = {TestTeacher} />
+          <Route exact path = "/Test/Teacher/:id" component = {TestTeacher} />
           <Route path = "*" component = {PageNotFound} />
       </Switch>
   </Router>
