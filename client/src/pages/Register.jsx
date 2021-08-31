@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import GoogleLogin from 'react-google-login';
 import Loader from "../components/Loader";
 const userApi = require("../apis/user.api.js");
-const APP_ID = "632402415694-9ecqnttq28h5hola3u415aq1ltpiq30c.apps.googleusercontent.com";
+const APP_ID = "3386313148-i8i8cs3urnoql1i2plgm34e6ipovq6r8.apps.googleusercontent.com";
 
 const Register = () => {
 

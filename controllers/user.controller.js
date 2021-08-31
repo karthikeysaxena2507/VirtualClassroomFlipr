@@ -141,6 +141,7 @@ const loginWithGoogle = async(req, res, next) => {
         var tokenId = req.body.token;
         var role = req.body.role;
         const response = await client.verifyIdToken({idToken: tokenId, audience: process.env.GOOGLE_CLIENT_ID});
+        console.log(response);
         var {email_verified, given_name, email} = response.payload;
         if(email_verified) 
         {
