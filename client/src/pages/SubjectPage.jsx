@@ -25,11 +25,10 @@ const Subjects = () => {
             try {
                 const response = await subjectApi.getSubjectById(id);
                 (response === "INVALID") && (window.location = `/`);
-                console.log(response);
                 setRole(response.role);
                 setUsername(response.username);
                 setSubject(response.subject);
-                setStudents(response.subject.students);  
+                setStudents(response.students);  
                 let tasks = [];          
                 const date = new Date();
                 const currentTime = Date.parse(date);
@@ -41,7 +40,6 @@ const Subjects = () => {
                 else {
                     tasks = response.tasks;
                 }
-                console.log(tasks);
                 setUpcomingTests(tasks.filter((task) => {
                     return (task.type === "Test" && (task.deadline + task.duration) > currentTime);
                 }));
@@ -78,7 +76,7 @@ const Subjects = () => {
             <li> Teacher: <b> {subject.teacherName} </b> </li>
             <li> Schedule: <i> {subject.days.toString() + " at " + subject.time}</i> </li>
             <li> Subject Code: <b> {subject.subjectCode} </b> </li>
-            <li> No. of Students: {students.length}</li>
+            <li> No. of Students: {0}</li>
             <li> 
                 No. of Assignments: {previousAssignments.length + currentAssignments.length} 
             </li>
@@ -96,7 +94,7 @@ const Subjects = () => {
                 onClick = {add}> New Test
             </button>
         </div>
-        <div className = "row mt-3 mb-5">
+        <div className = "row mt-3">
             <div className = "col-md-6 mt-5 card">
                 <h3> Assignments </h3>
                 <div className = "mt-4">
@@ -163,6 +161,16 @@ const Subjects = () => {
                     })}
                 </div>
             </div>
+        </div>
+        <div className = "mb-5 mt-4 text-center">
+            <h3> Students </h3>
+            {students.map((student) => {
+                return (
+                    <li key = {student._id} className = "text-left task">
+                        {student.username}
+                    </li>
+                );
+            })}
         </div>
     </div>
 }

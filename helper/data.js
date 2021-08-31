@@ -40,8 +40,23 @@ const getTaskFromTaskId = async(taskId) => {
     return task;
 }
 
+/**
+ * Function to get users from user IDs
+ * @param {Array} userIds 
+ * @returns list of users
+ */
+const getUsersfromUserIds = async(userIds) => {
+    const users = [];
+    for (let id of userIds) {
+        const user = await User.findOne({_id: id});
+        users.push(user);
+    }
+    return users;
+}
+
 module.exports = {
     getSubjectsFromSubjectIds,
     getTasksFromTaskIds,
-    getTaskFromTaskId
+    getTaskFromTaskId,
+    getUsersfromUserIds
 }

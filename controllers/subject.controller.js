@@ -142,9 +142,11 @@ const getSubjectById = async(req, res, next) => {
         {
             let subject = await Subject.findOne({_id: req.params.subjectId});
             const tasks = await helper.getTasksFromTaskIds(subject.tasks);
+            const students = await helper.getUsersfromUserIds(subject.students);
             res.json({
                 subject,
                 tasks,
+                students,
                 username: user.username,
                 role: user.role
             });
