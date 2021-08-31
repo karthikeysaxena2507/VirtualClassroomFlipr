@@ -79,7 +79,7 @@ const TestPage = () => {
     return (loading) ? <Loader /> :
     <div className = "text-center upper-margin container">
         <Header />
-        <Heading heading = "Assignment" />
+        <Heading heading = "Test" />
         <div className = "subject mt-4 text-left pl-3 pr-3 pt-3 pb-3">
             <h3> {task.title} </h3> 
             <li> Description: {task.description} </li>

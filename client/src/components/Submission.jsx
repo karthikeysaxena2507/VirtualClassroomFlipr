@@ -32,7 +32,7 @@ const Submission = (props) => {
 
         <div 
             className = "text-left mt-2 task pl-3 pr-3 pt-2 pb-2"
-            style = {(props.status === "Previous") ? {display: "none"}: null}
+            style = {(props.status !== "Previous") ? {display: "none"}: null}
         >
             <div> Submitted By: {props.studentName} </div>
             <div> Submission: {props.submissionLink} </div>

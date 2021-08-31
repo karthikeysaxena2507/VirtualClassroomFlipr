@@ -28,7 +28,6 @@ const TestPage = () => {
                 setUsername(user.username);            
                 setRole(user.role);
                 const response = await taskApi.getTaskById(id, user.username);
-                console.log(response);
                 setTask(response);
                 var date = new Date(response.deadline);
                 const currentTime = Date.parse(new Date());
@@ -57,7 +56,7 @@ const TestPage = () => {
     return (loading) ? <Loader /> :
     <div className = "text-center upper-margin container">
         <Header />
-        <Heading heading = "Assignment" />
+        <Heading heading = "Test" />
         <div className = "subject mt-4 text-left pl-3 pr-3 pt-3 pb-3">
             <h3> {task.title} </h3> 
             <li> Description: {task.description} </li>
@@ -66,8 +65,14 @@ const TestPage = () => {
             <li> Test Duration: {task.duration / 60000} minutes </li>
         </div>
         <div className = "mt-4">
-            <h3> Submissions </h3>
-            <p className = "mt-2"> Note: Only submissions of completed tests can be viewed and graded </p>
+        <h3> Submissions </h3>
+            <p className = "mt-2"> Note: Only submissions of Previous assignments can be viewed and graded </p>
+            <h4 
+                className = "mt-2"
+                style = {(status === "Previous" && submissions.length > 0) ? {display: "none"} : null}
+            > 
+                No Submissions
+            </h4>
             {submissions.map((submission) => {
                 return (
                     <Submission

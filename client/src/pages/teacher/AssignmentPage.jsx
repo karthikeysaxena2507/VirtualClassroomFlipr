@@ -33,6 +33,7 @@ const AssignmentPage = () => {
                 var date = new Date(response.deadline);
                 const currentTime = Date.parse(new Date());
                 const deadline = response.deadline;
+                console.log(currentTime, deadline);
                 ((currentTime < deadline) && setStatus("Pending"));
                 setDate(date.toLocaleString('en-US', { timeZone: 'GMT'}));
                 setSubmissions(response.submissions);
@@ -46,7 +47,7 @@ const AssignmentPage = () => {
     },[id]);
 
     return (loading) ? <Loader /> :
-    <div className = "text-center upper-margin container">
+    <div className = "text-center upper-margin container mb-5">
         <Header />
         <Heading heading = "Assignment" />
         <div className = "subject mt-4 text-left pl-3 pr-3 pt-3 pb-3">

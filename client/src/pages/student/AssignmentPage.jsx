@@ -90,7 +90,7 @@ const AssignmentPage = () => {
                 />
                 
             </li>
-            <div className = "text-center">
+            <div style = {(status === "Previous") ? {display: "none"}: null} className = "text-center">
             <button 
                 className = "btn expand" 
                 onClick = {submit}> Submit
